@@ -1,13 +1,16 @@
 package ifpr.pgua.eic.vendinha2022.controllers;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 
 import ifpr.pgua.eic.vendinha2022.model.entities.Cliente;
 import ifpr.pgua.eic.vendinha2022.model.repositories.GerenciadorLoja;
 import ifpr.pgua.eic.vendinha2022.model.results.Result;
 import ifpr.pgua.eic.vendinha2022.model.results.SuccessResult;
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.vavr.control.Either;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
@@ -145,8 +148,12 @@ public class TelaClientes extends BaseController implements Initializable {
     }
 
     private void atualizarTabela(){
+
+            
         tbClientes.getItems().clear();
         tbClientes.getItems().addAll(gerenciador.getClientes());
+        
+        
     }
 
 }

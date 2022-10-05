@@ -11,8 +11,8 @@ import java.io.IOException;
 import ifpr.pgua.eic.vendinha2022.controllers.TelaClientes;
 import ifpr.pgua.eic.vendinha2022.controllers.TelaPrincipal;
 import ifpr.pgua.eic.vendinha2022.model.repositories.GerenciadorLoja;
-import ifpr.pgua.eic.vendinha2022.utils.BaseAppNavigator;
-import ifpr.pgua.eic.vendinha2022.utils.ScreenRegistryFXML;
+import io.github.hugoperlin.navigatorfx.BaseAppNavigator;
+import io.github.hugoperlin.navigatorfx.ScreenRegistryFXML;
 
 /**
  * JavaFX App
@@ -27,7 +27,7 @@ public class App extends BaseAppNavigator {
         // TODO Auto-generated method stub
         super.init();
         gerenciador = new GerenciadorLoja();
-        gerenciador.geraFakes();
+        //gerenciador.geraFakes();
         //gerenciador.carregar();
     }
 

@@ -25,6 +25,8 @@ import ifpr.pgua.eic.vendinha2022.model.entities.Venda;
 import ifpr.pgua.eic.vendinha2022.model.results.FailResult;
 import ifpr.pgua.eic.vendinha2022.model.results.Result;
 import ifpr.pgua.eic.vendinha2022.model.results.SuccessResult;
+import ifpr.pgua.eic.vendinha2022.utils.Env;
+import io.vavr.control.Either;
 
 public class GerenciadorLoja {
     
@@ -56,6 +58,30 @@ public class GerenciadorLoja {
             return Result.fail("Cliente já cadastrado!");
         }
 
+        try{
+            String usuario = Env.get("DB_USER");
+            String senha = Env.get("DB_PASSWORD");
+            String url = Env.get("DB_URL");
+            Connection con = DriverManager.getConnection(url,usuario,senha);
+
+            PreparedStatement pstm = con.prepareStatement("INSERT INTO clientesoo(nome,cpf,email,telefone) VALUES (?,?,?,?)");
+
+            pstm.setString(1,nome);
+            pstm.setString(2,cpf);
+            pstm.setString(3, email);
+            pstm.setString(4,telefone);
+
+            pstm.executeUpdate();
+
+            pstm.close();
+            con.close();
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+            return Result.fail(e.getMessage());
+        }
+
+
         Cliente cliente = new Cliente(nome,cpf,email,telefone);
         clientes.add(cliente);
 
@@ -66,6 +92,32 @@ public class GerenciadorLoja {
         Optional<Cliente> busca = clientes.stream().filter((cli)->cli.getCpf().equals(cpf)).findFirst();
         
         if(busca.isPresent()){
+            
+            try{
+                String usuario = Env.get("DB_USER");
+                String senha = Env.get("DB_PASSWORD");
+                String url = Env.get("DB_URL");
+                Connection con = DriverManager.getConnection(url,usuario,senha);
+    
+                PreparedStatement pstm = con.prepareStatement("UPDATE clientesoo set email=?, telefone=? WHERE cpf=?");
+    
+                pstm.setString(1, novoEmail);
+                pstm.setString(2, novoTelefone);
+                pstm.setString(3,cpf);
+                
+                pstm.executeUpdate();
+    
+                pstm.close();
+                con.close();
+    
+            }catch(SQLException e){
+                System.out.println(e.getMessage());
+                return Result.fail(e.getMessage());
+            }
+    
+
+
+
             Cliente cliente = busca.get();
             cliente.setEmail(novoEmail);
             cliente.setTelefone(novoTelefone);
@@ -76,6 +128,35 @@ public class GerenciadorLoja {
     }
 
     public List<Cliente> getClientes(){
+        clientes.clear();
+        try{
+            String usuario = Env.get("DB_USER");
+            String senha = Env.get("DB_PASSWORD");
+            String url = Env.get("DB_URL");
+            Connection con = DriverManager.getConnection(url,usuario,senha);
+
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM clientesoo");
+
+            ResultSet rs = pstm.executeQuery();
+
+            while(rs.next()){
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                String email = rs.getString("email");
+                String telefone = rs.getString("telefone");
+                String cpf = rs.getString("cpf");
+
+                Cliente cliente = new Cliente(id, nome, cpf, email, telefone);
+
+                clientes.add(cliente);
+            }
+
+
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+        
         return Collections.unmodifiableList(clientes);
     }
 
@@ -161,35 +242,6 @@ public class GerenciadorLoja {
         return Collections.unmodifiableList(vendas);
     }
 
-    public void salvar(){
-
-        Gson gson = new Gson();
-
-        try(FileWriter fout = new FileWriter("loja.json"); BufferedWriter bout = new BufferedWriter(fout)){
-
-            bout.write(gson.toJson(this));
-        }catch(IOException e ){
-            System.out.println("Problema ao salvar arquivo!");
-        }
-        
-    }
-
-    public void carregar(){
-
-        Gson gson = new Gson();
-
-        try(FileReader fin = new FileReader("loja.json"); BufferedReader bin = new BufferedReader(fin)){
-
-            GerenciadorLoja temp = gson.fromJson(bin, GerenciadorLoja.class);
-
-            this.clientes.addAll(temp.getClientes());
-            this.produtos.addAll(temp.getProdutos());
-            this.vendas.addAll(temp.getVendas());
-
-        }catch(IOException e ){
-            System.out.println("Problema ao salvar arquivo!");
-        }
-    }
 
 
 
