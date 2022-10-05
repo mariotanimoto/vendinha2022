@@ -58,30 +58,38 @@ public class GerenciadorLoja {
             return Result.fail("Cliente já cadastrado!");
         }
 
+        //conectar no banco de dados
+        //criar o comando sql
+        //ajustar os valores
+        //executar o comando sql
+        //fechar a conexão
+        
         try{
+            String url = Env.get("DB_URL");
             String usuario = Env.get("DB_USER");
             String senha = Env.get("DB_PASSWORD");
-            String url = Env.get("DB_URL");
+    
             Connection con = DriverManager.getConnection(url,usuario,senha);
 
-            PreparedStatement pstm = con.prepareStatement("INSERT INTO clientesoo(nome,cpf,email,telefone) VALUES (?,?,?,?)");
+            PreparedStatement pstm =  con.prepareStatement("INSERT INTO clientesoo (nome,cpf,email,telefone) VALUES (?,?,?,?)");
 
-            pstm.setString(1,nome);
-            pstm.setString(2,cpf);
+            pstm.setString(1, nome);
+            pstm.setString(2, cpf);
             pstm.setString(3, email);
-            pstm.setString(4,telefone);
+            pstm.setString(4, telefone);
 
             pstm.executeUpdate();
 
             pstm.close();
             con.close();
 
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-            return Result.fail(e.getMessage());
+
+        }catch(SQLException nomeQueQuiser){
+            System.out.println(nomeQueQuiser.getMessage());
+            return Result.fail(nomeQueQuiser.getMessage());
         }
 
-
+        
         Cliente cliente = new Cliente(nome,cpf,email,telefone);
         clientes.add(cliente);
 
@@ -93,28 +101,30 @@ public class GerenciadorLoja {
         
         if(busca.isPresent()){
             
+            //conectar no banco de dados
+            //criar o comando sql
+            //ajustar os valores
+            //executar o comando sql
+            //fechar a conexão
             try{
-                String usuario = Env.get("DB_USER");
-                String senha = Env.get("DB_PASSWORD");
-                String url = Env.get("DB_URL");
-                Connection con = DriverManager.getConnection(url,usuario,senha);
-    
-                PreparedStatement pstm = con.prepareStatement("UPDATE clientesoo set email=?, telefone=? WHERE cpf=?");
-    
-                pstm.setString(1, novoEmail);
-                pstm.setString(2, novoTelefone);
-                pstm.setString(3,cpf);
-                
-                pstm.executeUpdate();
-    
-                pstm.close();
-                con.close();
-    
-            }catch(SQLException e){
-                System.out.println(e.getMessage());
-                return Result.fail(e.getMessage());
+            String url = Env.get("DB_URL");
+            String usuario = Env.get("DB_USER");
+            String senha = Env.get("DB_PASSWORD");
+            Connection con = DriverManager.getConnection(url,usuario,senha);
+            PreparedStatement a = con.prepareStatement("UPDATE clientesoo set email = ?,telefone = ? WHERE cpf = ?");//não pode sair da ordem
+            
+            a.setString(1,novoEmail);
+            a.setString(2,novoTelefone);
+            a.setString(3,cpf);
+
+            a.executeUpdate();
+
+            a.close();
+            con.close();
             }
-    
+            catch(SQLException e){
+            System.out.println(e.getMessage());
+            }
 
 
 
