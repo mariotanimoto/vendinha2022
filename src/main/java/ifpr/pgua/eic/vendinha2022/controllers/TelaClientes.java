@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import ifpr.pgua.eic.vendinha2022.model.entities.Cliente;
+import ifpr.pgua.eic.vendinha2022.model.repositories.ClienteRepositorio;
 import ifpr.pgua.eic.vendinha2022.model.repositories.GerenciadorLoja;
 import ifpr.pgua.eic.vendinha2022.model.results.Result;
 import ifpr.pgua.eic.vendinha2022.model.results.SuccessResult;
@@ -58,10 +59,10 @@ public class TelaClientes extends BaseController implements Initializable {
 
     private Cliente selecionado = null;
 
-    private GerenciadorLoja gerenciador;
+    private ClienteRepositorio repositorio;
 
-    public TelaClientes(GerenciadorLoja gerenciador) {
-        this.gerenciador = gerenciador;
+    public TelaClientes(ClienteRepositorio repositorio) {
+        this.repositorio = repositorio;
     }
 
     @Override
@@ -90,10 +91,10 @@ public class TelaClientes extends BaseController implements Initializable {
         Result result = null;
 
         if (atualizar) {
-            result = gerenciador.atualizarCliente(cpf,telefone,email);
+            result = repositorio.atualizar(selecionado.getId(),nome,cpf,telefone,email);
 
         } else {
-            result = gerenciador.adicionarCliente(nome, cpf, email, telefone);
+            result = repositorio.cadastrar(nome, cpf, email, telefone);
 
         }
 
@@ -145,7 +146,7 @@ public class TelaClientes extends BaseController implements Initializable {
 
             
         tbClientes.getItems().clear();
-        tbClientes.getItems().addAll(gerenciador.getClientes());
+        tbClientes.getItems().addAll(repositorio.listar());
         
         
     }

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import ifpr.pgua.eic.vendinha2022.model.FabricaConexao;
 import ifpr.pgua.eic.vendinha2022.model.entities.Cliente;
 import ifpr.pgua.eic.vendinha2022.model.entities.Produto;
 import ifpr.pgua.eic.vendinha2022.model.entities.Venda;
@@ -25,8 +26,11 @@ public class GerenciadorLoja {
     private List<Venda> vendas;
     private Venda venda;
 
+    private FabricaConexao fabricaConexao;
+
     
-    public GerenciadorLoja(){
+    public GerenciadorLoja(FabricaConexao fabricaConexao){
+        this.fabricaConexao = fabricaConexao;
         clientes = new ArrayList<>();
         produtos = new ArrayList<>();
         vendas = new ArrayList<>();
@@ -54,30 +58,7 @@ public class GerenciadorLoja {
         //executar o comando sql
         //fechar a conexão
         
-        try{
-            String user = Env.get("DB_USER");
-            String password = Env.get("DB_PASSWORD");
-            String url = Env.get("DB_URL");
-
-            Connection con = DriverManager.getConnection(url,user,password);
-
-            PreparedStatement pstm = con.prepareStatement("INSERT INTO clientes(nome,cpf,email,telefone) VALUES (?,?,?,?)");
-
-            pstm.setString(1, nome);
-            pstm.setString(2, cpf);
-            pstm.setString(3, email);
-            pstm.setString(4, telefone);
-
-            pstm.executeUpdate();
-
-            pstm.close();
-            con.close();
-
-
-        }catch(SQLException nomeQueQuiser){
-            System.out.println(nomeQueQuiser.getMessage());
-            return Result.fail(nomeQueQuiser.getMessage());
-        }
+        
 
         
         Cliente cliente = new Cliente(nome,cpf,email,telefone);
@@ -96,28 +77,7 @@ public class GerenciadorLoja {
             //ajustar os valores
             //executar o comando sql
             //fechar a conexão
-            try{
-                String user = Env.get("DB_USER");
-                String password = Env.get("DB_PASSWORD");
-                String url = Env.get("DB_URL");
-    
-                Connection con = DriverManager.getConnection(url,user,password);
-    
-                PreparedStatement pstm = con.prepareStatement("UPDATE clientes set email=?, telefone=? WHERE cpf=?");
-    
-                pstm.setString(1, novoEmail);
-                pstm.setString(2, novoTelefone);
-                pstm.setString(3,cpf);
-                
-                pstm.executeUpdate();
-    
-                pstm.close();
-                con.close();
-    
-            }catch(SQLException e){
-                System.out.println(e.getMessage());
-                return Result.fail(e.getMessage());
-            }
+            
 
 
 
@@ -132,46 +92,14 @@ public class GerenciadorLoja {
 
     public List<Cliente> getClientes(){
         clientes.clear();
-        try{
-            String user = Env.get("DB_USER");
-            String password = Env.get("DB_PASSWORD");
-            String url = Env.get("DB_URL");
-
-            Connection con = DriverManager.getConnection(url,user,password);
-
-            PreparedStatement pstm = con.prepareStatement("SELECT * FROM clientes");
-
-            ResultSet rs = pstm.executeQuery();
-
-            while(rs.next()){
-                int id = rs.getInt("id");
-                String nome = rs.getString("nome");
-                String email = rs.getString("email");
-                String telefone = rs.getString("telefone");
-                String cpf = rs.getString("cpf");
-
-                Cliente cliente = new Cliente(id, nome, cpf, email, telefone);
-
-                clientes.add(cliente);
-            }
-
-
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-            return null;
-        }
-        
-        return Collections.unmodifiableList(clientes);
+        return null;
     }
 
     public Result adicionarProduto(String nome, String descricao, double valor, double quantidade){
 
         try{
-            String user = Env.get("DB_USER");
-            String password = Env.get("DB_PASSWORD");
-            String url = Env.get("DB_URL");
 
-            Connection con = DriverManager.getConnection(url,user,password);
+            Connection con = fabricaConexao.getConnection();
 
             PreparedStatement pstm = con.prepareStatement("INSERT INTO produtos(nome,descricao,valor,quantidadeEstoque) VALUES (?,?,?,?)");
 
@@ -199,12 +127,9 @@ public class GerenciadorLoja {
         produtos.clear();
 
         try{
-            String user = Env.get("DB_USER");
-            String password = Env.get("DB_PASSWORD");
-            String url = Env.get("DB_URL");
 
-            Connection con = DriverManager.getConnection(url,user,password);
-
+            Connection con = fabricaConexao.getConnection();
+            
             PreparedStatement pstm = con.prepareStatement("SELECT * FROM produtos");
 
             ResultSet resultSet = pstm.executeQuery();
