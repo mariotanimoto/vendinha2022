@@ -1,10 +1,5 @@
 package ifpr.pgua.eic.vendinha2022.model.repositories;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,17 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.gson.Gson;
-import com.mysql.cj.xdevapi.PreparableStatement;
-
 import ifpr.pgua.eic.vendinha2022.model.entities.Cliente;
 import ifpr.pgua.eic.vendinha2022.model.entities.Produto;
 import ifpr.pgua.eic.vendinha2022.model.entities.Venda;
-import ifpr.pgua.eic.vendinha2022.model.results.FailResult;
 import ifpr.pgua.eic.vendinha2022.model.results.Result;
-import ifpr.pgua.eic.vendinha2022.model.results.SuccessResult;
 import ifpr.pgua.eic.vendinha2022.utils.Env;
-import io.vavr.control.Either;
 
 public class GerenciadorLoja {
     
@@ -36,6 +25,7 @@ public class GerenciadorLoja {
     private List<Venda> vendas;
     private Venda venda;
 
+    
     public GerenciadorLoja(){
         clientes = new ArrayList<>();
         produtos = new ArrayList<>();
@@ -59,17 +49,18 @@ public class GerenciadorLoja {
         }
 
         try{
-            String usuario = Env.get("DB_USER");
-            String senha = Env.get("DB_PASSWORD");
+            String user = Env.get("DB_USER");
+            String password = Env.get("DB_PASSWORD");
             String url = Env.get("DB_URL");
-            Connection con = DriverManager.getConnection(url,usuario,senha);
 
-            PreparedStatement pstm = con.prepareStatement("INSERT INTO clientesoo(nome,cpf,email,telefone) VALUES (?,?,?,?)");
+            Connection con = DriverManager.getConnection(url,user,password);
 
-            pstm.setString(1,nome);
-            pstm.setString(2,cpf);
+            PreparedStatement pstm = con.prepareStatement("INSERT INTO clientes(nome,cpf,email,telefone) VALUES (?,?,?,?)");
+
+            pstm.setString(1, nome);
+            pstm.setString(2, cpf);
             pstm.setString(3, email);
-            pstm.setString(4,telefone);
+            pstm.setString(4, telefone);
 
             pstm.executeUpdate();
 
@@ -94,12 +85,13 @@ public class GerenciadorLoja {
         if(busca.isPresent()){
             
             try{
-                String usuario = Env.get("DB_USER");
-                String senha = Env.get("DB_PASSWORD");
+                String user = Env.get("DB_USER");
+                String password = Env.get("DB_PASSWORD");
                 String url = Env.get("DB_URL");
-                Connection con = DriverManager.getConnection(url,usuario,senha);
     
-                PreparedStatement pstm = con.prepareStatement("UPDATE clientesoo set email=?, telefone=? WHERE cpf=?");
+                Connection con = DriverManager.getConnection(url,user,password);
+    
+                PreparedStatement pstm = con.prepareStatement("UPDATE clientes set email=?, telefone=? WHERE cpf=?");
     
                 pstm.setString(1, novoEmail);
                 pstm.setString(2, novoTelefone);
@@ -130,12 +122,13 @@ public class GerenciadorLoja {
     public List<Cliente> getClientes(){
         clientes.clear();
         try{
-            String usuario = Env.get("DB_USER");
-            String senha = Env.get("DB_PASSWORD");
+            String user = Env.get("DB_USER");
+            String password = Env.get("DB_PASSWORD");
             String url = Env.get("DB_URL");
-            Connection con = DriverManager.getConnection(url,usuario,senha);
 
-            PreparedStatement pstm = con.prepareStatement("SELECT * FROM clientesoo");
+            Connection con = DriverManager.getConnection(url,user,password);
+
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM clientes");
 
             ResultSet rs = pstm.executeQuery();
 
@@ -162,21 +155,72 @@ public class GerenciadorLoja {
 
     public Result adicionarProduto(String nome, String descricao, double valor, double quantidade){
 
-        Optional<Produto> busca = produtos.stream().filter((prod)->prod.getNome().equals(nome)).findFirst();
+        try{
+            String user = Env.get("DB_USER");
+            String password = Env.get("DB_PASSWORD");
+            String url = Env.get("DB_URL");
 
-        if(busca.isPresent()){
-            return Result.fail("Produto já cadastrado!");
+            Connection con = DriverManager.getConnection(url,user,password);
+
+            PreparedStatement pstm = con.prepareStatement("INSERT INTO produtos(nome,descricao,valor,quantidadeEstoque) VALUES (?,?,?,?)");
+
+            pstm.setString(1, nome);
+            pstm.setString(2, descricao);
+            pstm.setDouble(3, valor);
+            pstm.setDouble(4, quantidade);
+
+            pstm.execute();
+
+            pstm.close();
+            con.close();
+
+            return Result.success("Produto cadastrado com sucesso!");
+
+
+        }catch(SQLException e){
+            return Result.fail(e.getMessage());
         }
-
-        Produto produto = new Produto(nome,descricao,valor,quantidade);
-        produtos.add(produto);
-
-        return Result.success("Produto cadastrado com sucesso!");
 
     }
 
     public List<Produto> getProdutos(){
-        return Collections.unmodifiableList(produtos);
+
+        produtos.clear();
+
+        try{
+            String user = Env.get("DB_USER");
+            String password = Env.get("DB_PASSWORD");
+            String url = Env.get("DB_URL");
+
+            Connection con = DriverManager.getConnection(url,user,password);
+
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM produtos");
+
+            ResultSet resultSet = pstm.executeQuery();
+
+            while(resultSet.next()){
+                int id = resultSet.getInt("id");
+                String nome = resultSet.getString("nome");
+                String descricao = resultSet.getString("descricao");
+                double valor = resultSet.getDouble("valor");
+                double quantidadeEstoque = resultSet.getDouble("quantidadeEstoque");
+
+                Produto produto = new Produto(id,nome, descricao, valor, quantidadeEstoque);
+                produtos.add(produto);
+            }
+
+            pstm.close();
+            con.close();
+
+            return Collections.unmodifiableList(produtos);
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+
+            return Collections.emptyList();
+        }
+
+
+        
     }
 
     public Venda getVendaAtual(){

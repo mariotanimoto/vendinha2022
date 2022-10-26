@@ -1,15 +1,8 @@
 package ifpr.pgua.eic.vendinha2022;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-
 import ifpr.pgua.eic.vendinha2022.controllers.TelaClientes;
 import ifpr.pgua.eic.vendinha2022.controllers.TelaPrincipal;
+import ifpr.pgua.eic.vendinha2022.controllers.TelaProdutos;
 import ifpr.pgua.eic.vendinha2022.model.repositories.GerenciadorLoja;
 import io.github.hugoperlin.navigatorfx.BaseAppNavigator;
 import io.github.hugoperlin.navigatorfx.ScreenRegistryFXML;
@@ -20,12 +13,12 @@ import io.github.hugoperlin.navigatorfx.ScreenRegistryFXML;
 public class App extends BaseAppNavigator {
 
     private GerenciadorLoja gerenciador;
-
-
+    
     @Override
     public void init() throws Exception {
         // TODO Auto-generated method stub
         super.init();
+
         gerenciador = new GerenciadorLoja();
         //gerenciador.geraFakes();
         //gerenciador.carregar();
@@ -56,6 +49,8 @@ public class App extends BaseAppNavigator {
     public void registrarTelas() {
         registraTela("PRINCIPAL", new ScreenRegistryFXML(getClass(), "fxml/principal.fxml", (o)->new TelaPrincipal()));
         registraTela("CLIENTES", new ScreenRegistryFXML(getClass(), "fxml/clientes.fxml", (o)->new TelaClientes(gerenciador)));  
+        registraTela("PRODUTOS", new ScreenRegistryFXML(getClass(), "fxml/produtos.fxml", (o)->new TelaProdutos(gerenciador)));  
+    
     }
 
 

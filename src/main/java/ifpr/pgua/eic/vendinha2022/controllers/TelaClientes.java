@@ -1,26 +1,18 @@
 package ifpr.pgua.eic.vendinha2022.controllers;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
 import ifpr.pgua.eic.vendinha2022.model.entities.Cliente;
 import ifpr.pgua.eic.vendinha2022.model.repositories.GerenciadorLoja;
 import ifpr.pgua.eic.vendinha2022.model.results.Result;
 import ifpr.pgua.eic.vendinha2022.model.results.SuccessResult;
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.vavr.control.Either;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableStringValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
@@ -64,6 +56,8 @@ public class TelaClientes extends BaseController implements Initializable {
 
     private boolean atualizar = false;
 
+    private Cliente selecionado = null;
+
     private GerenciadorLoja gerenciador;
 
     public TelaClientes(GerenciadorLoja gerenciador) {
@@ -96,7 +90,7 @@ public class TelaClientes extends BaseController implements Initializable {
         Result result = null;
 
         if (atualizar) {
-            result = gerenciador.atualizarCliente(cpf, email, telefone);
+            result = gerenciador.atualizarCliente(cpf,telefone,email);
 
         } else {
             result = gerenciador.adicionarCliente(nome, cpf, email, telefone);
@@ -129,7 +123,7 @@ public class TelaClientes extends BaseController implements Initializable {
     @FXML
     private void atualizar(MouseEvent event) {
         if (event.getClickCount() == 2) {
-            Cliente selecionado = tbClientes.getSelectionModel().getSelectedItem();
+            selecionado = tbClientes.getSelectionModel().getSelectedItem();
 
             if (selecionado != null) {
                 tfNome.setText(selecionado.getNome());

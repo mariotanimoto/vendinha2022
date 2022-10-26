@@ -1,6 +1,5 @@
 package ifpr.pgua.eic.vendinha2022;
 
-import ifpr.pgua.eic.vendinha2022.utils.Env;
 
 public class Launcher {
     
