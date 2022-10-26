@@ -48,6 +48,12 @@ public class GerenciadorLoja {
             return Result.fail("Cliente já cadastrado!");
         }
 
+        //conectar no banco de dados
+        //criar o comando sql
+        //ajustar os valores
+        //executar o comando sql
+        //fechar a conexão
+        
         try{
             String user = Env.get("DB_USER");
             String password = Env.get("DB_PASSWORD");
@@ -67,12 +73,13 @@ public class GerenciadorLoja {
             pstm.close();
             con.close();
 
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-            return Result.fail(e.getMessage());
+
+        }catch(SQLException nomeQueQuiser){
+            System.out.println(nomeQueQuiser.getMessage());
+            return Result.fail(nomeQueQuiser.getMessage());
         }
 
-
+        
         Cliente cliente = new Cliente(nome,cpf,email,telefone);
         clientes.add(cliente);
 
@@ -84,6 +91,11 @@ public class GerenciadorLoja {
         
         if(busca.isPresent()){
             
+            //conectar no banco de dados
+            //criar o comando sql
+            //ajustar os valores
+            //executar o comando sql
+            //fechar a conexão
             try{
                 String user = Env.get("DB_USER");
                 String password = Env.get("DB_PASSWORD");
@@ -106,7 +118,6 @@ public class GerenciadorLoja {
                 System.out.println(e.getMessage());
                 return Result.fail(e.getMessage());
             }
-    
 
 
 

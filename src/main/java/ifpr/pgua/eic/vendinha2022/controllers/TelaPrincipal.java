@@ -1,7 +1,7 @@
 package ifpr.pgua.eic.vendinha2022.controllers;
 
 import ifpr.pgua.eic.vendinha2022.App;
-import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
+import ifpr.pgua.eic.vendinha2022.utils.BorderPaneRegion;
 import javafx.fxml.FXML;
 
 public class TelaPrincipal extends BaseController {

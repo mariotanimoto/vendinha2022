@@ -4,8 +4,9 @@ import ifpr.pgua.eic.vendinha2022.controllers.TelaClientes;
 import ifpr.pgua.eic.vendinha2022.controllers.TelaPrincipal;
 import ifpr.pgua.eic.vendinha2022.controllers.TelaProdutos;
 import ifpr.pgua.eic.vendinha2022.model.repositories.GerenciadorLoja;
-import io.github.hugoperlin.navigatorfx.BaseAppNavigator;
-import io.github.hugoperlin.navigatorfx.ScreenRegistryFXML;
+import ifpr.pgua.eic.vendinha2022.utils.BaseAppNavigator;
+import ifpr.pgua.eic.vendinha2022.utils.ScreenRegistryFXML;
+
 
 /**
  * JavaFX App
